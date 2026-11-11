@@ -66,3 +66,69 @@ with st.sidebar:
     total_tasks = len(st.session_state.tasks)
     completed_tasks = sum(1 for t in st.session_state.tasks if t["done"])
     progress = (completed_tasks / total_tasks) if total_tasks > 0 else 0.0
+    
+    st.progress(progress)
+    st.write(f"**{completed_tasks} of {total_tasks}** tasks completed ({int(progress * 100)}%)")
+
+# 4. Build Tab Labels List explicitly
+tab_labels = ["📌 Overview", "🎹 Piano", "🎷 Sax", "🎤 Chorus", "📚 Studies", "🔬 Science Fair", "💻 Tech Fair", "📜 Social Studies Fair"]
+
+# Render Streamlit Tabs
+tabs = st.tabs(tab_labels)
+
+# --- OVERVIEW TAB (index 0) ---
+with tabs[0]:
+    st.subheader("📌 Global Summary Across All Categories")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Active Tasks", total_tasks - completed_tasks)
+    with col2:
+        st.metric("Completed Tasks", completed_tasks)
+    with col3:
+        st.metric("Total Categories", len(CATEGORIES))
+    
+    st.divider()
+    
+    st.write("### Pending Tasks")
+    pending_tasks = [t for t in st.session_state.tasks if not t["done"]]
+    if not pending_tasks:
+        st.success("All tasks across all categories are completed! 🎉")
+    else:
+        for t in pending_tasks:
+            st.checkbox(
+                f"**[{t['category']}]** {t['title']} — *Due: {t['due']}* ({t['priority']} Priority)",
+                value=t["done"],
+                key=f"overview_task_{t['id']}"
+            )
+
+# --- CATEGORY TABS (indices 1 to 7) ---
+for idx, cat in enumerate(CATEGORIES, start=1):
+    with tabs[idx]:
+        st.subheader(f"{cat} Tasks")
+        
+        cat_tasks = [t for t in st.session_state.tasks if t["category"] == cat]
+        
+        if not cat_tasks:
+            st.info(f"No tasks listed for **{cat}**. Use the sidebar form to add one!")
+        else:
+            for task in cat_tasks:
+                cols = st.columns([0.05, 0.65, 0.15, 0.15])
+                
+                # Checkbox updates session state directly
+                is_done = cols[0].checkbox("", value=task["done"], key=f"cat_{cat}_{task['id']}")
+                task["done"] = is_done
+                
+                # Title display
+                if is_done:
+                    cols[1].markdown(f"~~{task['title']}~~")
+                else:
+                    cols[1].markdown(f"**{task['title']}**")
+                
+                # Priority indicator
+                prio = task["priority"]
+                color = "🔴" if prio == "High" else ("🟡" if prio == "Medium" else "🟢")
+                cols[2].write(f"{color} {prio}")
+                
+                # Due date
+                cols[3].write(f"🗓️ {task['due']}")

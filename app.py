@@ -1,6 +1,5 @@
 import streamlit as st
-import pandas as pd
-from datetime import datetime, date
+from datetime import date
 
 # 1. Page Configuration
 st.set_page_config(
@@ -10,16 +9,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Background & Tab Styling
+# 2. Custom CSS Background & Tab Styling (Triple quotes properly closed)
 st.markdown("""
-    <style>
+<style>
     /* Dark Gradient Background */
     .stApp {
         background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
         color: #f8fafc;
     }
     
-    /* Title Styling */
+    /* Main Title Styling */
     .main-title {
         font-family: 'Inter', sans-serif;
         font-weight: 800;
@@ -29,7 +28,7 @@ st.markdown("""
         margin-bottom: 0.2rem;
     }
 
-    /* Tab List Layout & Custom Styling */
+    /* Customizing Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
         background-color: rgba(15, 23, 42, 0.6);
@@ -42,4 +41,5 @@ st.markdown("""
         padding: 8px 14px;
         background-color: rgba(30, 41, 59, 0.5);
         color: #94a3b8 !important;
-        font-weight: 600;
+        font-weight: 600
+        

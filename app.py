@@ -9,49 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Background & Tab Styling
-st.markdown("""
-<style>
-    /* Dark Gradient Background */
-    .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        color: #f8fafc;
-    }
-    
-    /* Main Title Styling */
-    .main-title {
-        font-family: 'Inter', sans-serif;
-        font-weight: 800;
-        background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.2rem;
-    }
-
-    /* Customizing Streamlit Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
-        background-color: rgba(15, 23, 42, 0.6);
-        padding: 6px;
-        border-radius: 10px;
-    }
-
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 6px;
-        padding: 8px 14px;
-        background-color: rgba(30, 41, 59, 0.5);
-        color: #94a3b8 !important;
-        font-weight: 600;
-    }
-
-    .stTabs [aria-selected="true"] {
-        background-color: #6366f1 !important;
-        color: #ffffff !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# 3. Category Definitions
+# 2. Category Definitions
 CATEGORIES = [
     "Piano", 
     "Sax", 
@@ -62,7 +20,7 @@ CATEGORIES = [
     "Social Studies Fair"
 ]
 
-# 4. Initialize Session State
+# 3. Initialize Session State
 if 'tasks' not in st.session_state:
     st.session_state.tasks = [
         {"id": 1, "title": "Practice Vivaldi Summer Presto", "category": "Piano", "due": date.today(), "priority": "High", "done": False},
@@ -85,5 +43,26 @@ def add_task(title, category, due_date, priority):
         st.toast(f"Task added to **{category}**!", icon="✅")
 
 # Header Section
-st.markdown('<h1 class="main-title
-            
+st.title("🎯 Multi-Category Activity Planner")
+st.caption("Organize tasks across music, academic subjects, and project competitions.")
+
+# Sidebar - Add Task & Analytics
+with st.sidebar:
+    st.header("➕ Add New Task")
+    with st.form("add_task_form", clear_on_submit=True):
+        task_title = st.text_input("Task Description")
+        task_cat = st.selectbox("Category", CATEGORIES)
+        task_due = st.date_input("Due Date", value=date.today())
+        task_prio = st.selectbox("Priority", ["Low", "Medium", "High"], index=1)
+        
+        submitted = st.form_submit_button("Add Task", use_container_width=True)
+        if submitted:
+            add_task(task_title, task_cat, task_due, task_prio)
+
+    st.divider()
+    
+    # Progress Calculation
+    st.header("📊 Total Progress")
+    total_tasks = len(st.session_state.tasks)
+    completed_tasks = sum(1 for t in st.session_state.tasks if t["done"])
+    progress = (completed_tasks / total_tasks) if total_tasks > 0 else 0.0

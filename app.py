@@ -44,5 +44,4 @@ DEFAULT_TASKS = [
     {"id": 16, "title": "Researching Plans for Human Settlement on the Moon and Mars", "category": "ELA", "due": "2026-11-06", "priority": "High", "done": True},
 ]
 
-# 3. Session State Initialization
-if 'tasks' not in st.session_state or st.sidebar.button("🔄 Sync/
+# Sidebar

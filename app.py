@@ -40,7 +40,7 @@ def add_task(title, category, due_date, priority):
             "priority": priority,
             "done": False
         })
-        st.toast(f"Task added to **{category}**!", icon="✅")
+        st.toast(f"Task added to {category}!", icon="✅")
 
 # Header Section
 st.title("🎯 Multi-Category Activity Planner")
@@ -91,5 +91,39 @@ with tabs[0]:
         st.write("### Pending Tasks")
         pending_tasks = [t for t in st.session_state.tasks if not t["done"]]
         if not pending_tasks:
-            st.success("All tasks across all categories are
-                       
+            st.success("All tasks across all categories are completed!")
+        else:
+            for t in pending_tasks:
+                st.checkbox(
+                    f"[{t['category']}] {t['title']} — Due: {t['due']} ({t['priority']} Priority)",
+                    value=t["done"],
+                    key=f"overview_task_{t['id']}"
+                )
+
+# --- INDIVIDUAL CATEGORY TABS ---
+for idx, cat in enumerate(CATEGORIES, start=1):
+    with tabs[idx]:
+        with st.container(border=True):
+            st.subheader(f"📂 {cat} Workspace")
+            
+            cat_tasks = [t for t in st.session_state.tasks if t["category"] == cat]
+            
+            if not cat_tasks:
+                st.info(f"No tasks listed for {cat}. Add one from the sidebar!")
+            else:
+                for task in cat_tasks:
+                    cols = st.columns([0.05, 0.65, 0.15, 0.15])
+                    
+                    is_done = cols[0].checkbox("", value=task["done"], key=f"cat_{cat}_{task['id']}")
+                    task["done"] = is_done
+                    
+                    if is_done:
+                        cols[1].markdown(f"~~{task['title']}~~")
+                    else:
+                        cols[1].markdown(f"**{task['title']}**")
+                    
+                    prio = task["priority"]
+                    color = "🔴" if prio == "High" else ("🟡" if prio == "Medium" else "🟢")
+                    cols[2].write(f"{color} {prio}")
+                    
+                    cols[3].write(f"🗓️ {task['due']}")
